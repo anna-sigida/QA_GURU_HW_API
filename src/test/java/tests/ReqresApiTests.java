@@ -40,7 +40,7 @@ public class ReqresApiTests {
                 .then()
                 .spec(createUserResponseSpec)
                 .extract().as(UserResponseModel.class));
-        step("Make request", () ->
+        step("Check result", () ->
                 assertThat(response.getId()).isNotEmpty());
     }
 
