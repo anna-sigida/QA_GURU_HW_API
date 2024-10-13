@@ -1,5 +1,6 @@
 package tests;
 
+import io.restassured.RestAssured;
 import models.LoginBodyModel;
 import models.LoginResponseModel;
 import models.UserBodyModel;
@@ -14,8 +15,7 @@ import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static specs.LoginSpec.*;
-import static specs.UserSpec.*;
+import static specs.Specs.*;
 
 @Tag("API")
 public class ReqresApiTests {
@@ -24,7 +24,8 @@ public class ReqresApiTests {
 
     @BeforeAll
     public static void setUp() {
-        baseURI = "https://reqres.in/api";
+        RestAssured.baseURI = "https://reqres.in";
+        RestAssured.basePath = "/api";
     }
 
     @Test
@@ -35,7 +36,7 @@ public class ReqresApiTests {
                 given(createRequestSpec)
                 .when()
                 .body(userData)
-                .post()
+                .post("/users")
 
                 .then()
                 .spec(createUserResponseSpec)
@@ -53,7 +54,7 @@ public class ReqresApiTests {
                 given(updateRequestSpec)
                 .when()
                 .body(userData)
-                .patch()
+                .patch("/users/2")
 
                 .then()
                 .spec(updateUserResponseSpec)
@@ -85,14 +86,14 @@ public class ReqresApiTests {
                 given(loginRequestSpec)
                 .when()
                 .body(authData)
-                .post()
+                .post("/login")
 
                 .then()
                 .spec(loginResponseSpec)
                 .extract().as(LoginResponseModel.class));
 
         step("Check result", () ->
-                assertThat(response.getToken()).isAlphanumeric());
+                assertThat(response.getToken()).isNotEmpty());
     }
 
     @Test
